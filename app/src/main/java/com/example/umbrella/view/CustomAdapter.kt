@@ -9,6 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.umbrella.R
 import com.example.umbrella.model.DataWeather
 import com.squareup.picasso.Picasso
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class CustomAdapter(val dataSet : List<DataWeather>) :
     RecyclerView.Adapter<CustomAdapter.CustomViewHolder>() {
@@ -53,10 +57,9 @@ class CustomAdapter(val dataSet : List<DataWeather>) :
             val temperature = data.main.temp + "°"
 
             // Set dt_txt to match display format
-            /*val dt = Date(data.dt_txt)
-            val sdf = SimpleDateFormat("hh:mm aa")
-            val time: String = sdf.format(dt) */
-            val time = data.dt_txt
+            val inputFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+            val outputFormat: DateFormat = SimpleDateFormat("h:mm a", Locale.US)
+            val time = outputFormat.format(inputFormat.parse(data.dt_txt)!!)
 
             tvTime.text = time
             tvtemp.text = temperature

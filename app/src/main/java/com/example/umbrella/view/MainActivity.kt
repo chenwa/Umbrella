@@ -28,8 +28,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        m_zip.setValue("94040") // Set default zip
+        m_zip.setValue("94040") // Set default zip Montain View
 
+        // Current weather card view
         val card1ViewModel = ViewModelProvider(
             this,
             object : ViewModelProvider.Factory {
@@ -42,20 +43,24 @@ class MainActivity : AppCompatActivity() {
         card1ViewModel.getCurrentWeather()
             .observe(this,
                 Observer<DataCurrentWeather> {t ->
-                    Log.e("Temp: ", t.main.temp)
-
+                    // Set background color according to temperature
                     if (t.main.temp.toFloat() < 60.00) {
                         card_current_weather.setBackgroundColor(getColor(R.color.colorCold))
+                    } else {
+                        card_current_weather.setBackgroundColor(getColor(R.color.colorWarm))
                     }
+
+                    // Add a degree symbol to the string
                     val temp = t.main.temp + "°"
 
+                    // Set text view values
                     tv_city.text = t.name
                     tv_temp.text = temp
                     tv_weather.text = t.weather[0].main
                 })
         card1ViewModel.getCurrentWeather(m_zip.value!!, "imperial")
 
-        // Today's Weather
+        // Today's Weather card view
         val weatherViewModel = ViewModelProvider(
             this,
             object : ViewModelProvider.Factory {

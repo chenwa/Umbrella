@@ -12,7 +12,7 @@
         android:id="@+id/card_current_weather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="#FE9900">
+        app:cardBackgroundColor="@color/colorWarm" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
