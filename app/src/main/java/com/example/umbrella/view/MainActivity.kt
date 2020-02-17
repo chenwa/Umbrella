@@ -109,15 +109,14 @@ class MainActivity : AppCompatActivity() {
         tomorrowWeatherViewModel.getWeather(m_zip.value!!, units)
 
         // Alert Dialog for Zip code
-
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Enter your Zip:")
+        builder.setTitle("Enter Valid Zip or I'll Crash:")
 
         // Set up the input
         val input = EditText(this)
 
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.inputType = InputType.TYPE_CLASS_TEXT
+        input.inputType = InputType.TYPE_CLASS_NUMBER
         builder.setView(input)
 
         // Set up the buttons

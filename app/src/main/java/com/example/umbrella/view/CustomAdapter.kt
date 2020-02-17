@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.umbrella.R
 import com.example.umbrella.model.DataWeather
@@ -26,6 +25,7 @@ class CustomAdapter(val dataSet : List<DataWeather>) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         // This only works for when we place 8 for Today and Tomorrow
+        // TODO: Dynamically add to Today and Tomorrow based on date stamp
         for (i in 1..7) {
             if (dataSet[i].main.temp.toFloat() > dataSet[highestIndex].main.temp.toFloat()) {
                 highestIndex = i
