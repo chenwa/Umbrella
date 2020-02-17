@@ -13,4 +13,11 @@ interface RetrofitEndpoint {
         @Query("appid") appKey: String,
         @Query("units") units: String
     ): Call<DataWeatherList>
+
+    @GET("weather")
+    fun getCurrentWeather(
+        @Query("zip") zipCode: String,
+        @Query("appid") appKey: String,
+        @Query("units") units: String
+    ): Call<DataCurrentWeather>
 }

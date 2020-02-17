@@ -9,13 +9,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.umbrella.R
 import com.example.umbrella.model.DataWeather
 import com.squareup.picasso.Picasso
-import org.json.JSONObject
 
 class CustomAdapter(val dataSet : List<DataWeather>) :
     RecyclerView.Adapter<CustomAdapter.CustomViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder =
-        CustomViewHolder(
+
+    // Find lowest and highest temps
+    var highestIndex : Int = 0
+    var lowestIndex : Int = 0
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
+
+        var viewHolder = CustomViewHolder(
             LayoutInflater.from(parent.context)
                 .inflate(
                     R.layout.item_layout,
@@ -23,7 +28,8 @@ class CustomAdapter(val dataSet : List<DataWeather>) :
                     false
                 )
         )
-
+        return viewHolder
+    }
 
     override fun getItemCount(): Int = dataSet.size
 
@@ -43,8 +49,17 @@ class CustomAdapter(val dataSet : List<DataWeather>) :
             val endUrl = "@2x.png"
             val iconUrl = baseUrl + data.weather[0].icon + endUrl
 
-            tvTime.text = data.dt_txt
-            tvtemp.text = data.main.temp
+            // Set temperature to display format
+            val temperature = data.main.temp + "°"
+
+            // Set dt_txt to match display format
+            /*val dt = Date(data.dt_txt)
+            val sdf = SimpleDateFormat("hh:mm aa")
+            val time: String = sdf.format(dt) */
+            val time = data.dt_txt
+
+            tvTime.text = time
+            tvtemp.text = temperature
             Picasso.get().load(iconUrl).into(ivWeather)
         }
     }

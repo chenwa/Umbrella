@@ -3,6 +3,7 @@ package com.example.umbrella.view
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -10,9 +11,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.umbrella.R
+import com.example.umbrella.model.DataCurrentWeather
 import com.example.umbrella.model.DataWeather
+import com.example.umbrella.viewmodel.CurrentWeatherViewModel
 import com.example.umbrella.viewmodel.WeatherViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -27,23 +30,47 @@ class MainActivity : AppCompatActivity() {
 
         m_zip.setValue("94040") // Set default zip
 
+        val card1ViewModel = ViewModelProvider(
+            this,
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                    return CurrentWeatherViewModel() as T
+                }
+            }
+        ).get(CurrentWeatherViewModel::class.java)
+
+        card1ViewModel.getCurrentWeather()
+            .observe(this,
+                Observer<DataCurrentWeather> {t ->
+                    Log.e("Temp: ", t.main.temp)
+
+                    if (t.main.temp.toFloat() < 60.00) {
+                        card_current_weather.setBackgroundColor(getColor(R.color.colorCold))
+                    }
+                    val temp = t.main.temp + "°"
+
+                    tv_city.text = t.name
+                    tv_temp.text = temp
+                    tv_weather.text = t.weather[0].main
+                })
+        card1ViewModel.getCurrentWeather(m_zip.value!!, "imperial")
+
+        // Today's Weather
         val weatherViewModel = ViewModelProvider(
             this,
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                     return WeatherViewModel() as T
                 }
-
             }
         ).get(WeatherViewModel::class.java)
 
         weatherViewModel.getWeatherList()
             .observe(this,
                 Observer<List<DataWeather>> { t ->
-                    recycler_view.layoutManager = LinearLayoutManager(
+                    recycler_view.layoutManager = GridLayoutManager(
                         this@MainActivity,
-                        LinearLayoutManager.HORIZONTAL,
-                        false
+                        4
                     )
                     recycler_view.adapter = CustomAdapter(t!!)
                 })
@@ -68,6 +95,11 @@ class MainActivity : AppCompatActivity() {
                 m_zip.setValue(input.text.toString())
             })
 
+        builder.setNegativeButton("Cancel",
+            DialogInterface.OnClickListener {dialog, which ->
+
+            })
+
         val d = builder.show()
         // TODO: Enforce that it fits the requirement of a zipcode
         d.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
@@ -75,9 +107,9 @@ class MainActivity : AppCompatActivity() {
         // register an observer to be notified on every state change.
         m_zip.observe(this, Observer {
             //here you should bind state to view
-            text_view.setText(m_zip.value)
-
+            //text_view.setText(m_zip.value)
             weatherViewModel.getWeather(m_zip.value!!, "imperial")
+            card1ViewModel.getCurrentWeather(m_zip.value!!, "imperial")
         })
     }
 }
