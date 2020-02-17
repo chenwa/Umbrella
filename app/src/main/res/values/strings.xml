@@ -2,5 +2,9 @@
     <string name="app_name">Umbrella</string>
     <string name="API_KEY">d9363c99f5cdfd3f1aae78c8b5d810d7</string>
     <string name="today">Today</string>
-
+    <string name="save">Save</string>
+    <string-array name="units">
+        <item>imperial</item>
+        <item>metric</item>
+    </string-array>
 </resources>

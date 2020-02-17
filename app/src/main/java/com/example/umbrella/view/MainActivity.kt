@@ -1,9 +1,10 @@
 package com.example.umbrella.view
 
+import android.app.Activity
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +24,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     var m_zip = MutableLiveData<String>()
+    var units = "imperial"
+    val SETTINGS_REQUEST = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +47,8 @@ class MainActivity : AppCompatActivity() {
             .observe(this,
                 Observer<DataCurrentWeather> {t ->
                     // Set background color according to temperature
-                    if (t.main.temp.toFloat() < 60.00) {
+                    if ((t.main.temp.toFloat() < 60.00 && units=="imperial") ||
+                        (t.main.temp.toFloat() < 15.55 && units=="metric")) {
                         card_current_weather.setBackgroundColor(getColor(R.color.colorCold))
                     } else {
                         card_current_weather.setBackgroundColor(getColor(R.color.colorWarm))
@@ -58,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                     tv_temp.text = temp
                     tv_weather.text = t.weather[0].main
                 })
-        card1ViewModel.getCurrentWeather(m_zip.value!!, "imperial")
+        card1ViewModel.getCurrentWeather(m_zip.value!!, units)
 
         // Today's Weather card view
         val weatherViewModel = ViewModelProvider(
@@ -80,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                     recycler_view.adapter = CustomAdapter(t!!)
                 })
 
-        weatherViewModel.getWeather(m_zip.value!!, "imperial")
+        weatherViewModel.getWeather(m_zip.value!!, units)
 
         // Alert Dialog for Zip code
 
@@ -113,8 +117,30 @@ class MainActivity : AppCompatActivity() {
         m_zip.observe(this, Observer {
             //here you should bind state to view
             //text_view.setText(m_zip.value)
-            weatherViewModel.getWeather(m_zip.value!!, "imperial")
-            card1ViewModel.getCurrentWeather(m_zip.value!!, "imperial")
+            weatherViewModel.getWeather(m_zip.value!!, units)
+            card1ViewModel.getCurrentWeather(m_zip.value!!, units)
         })
+
+
+
+        iv_gear.setOnClickListener { v ->
+            val intent = Intent(this, SettingsActivity::class.java)
+            intent.putExtra("zip", m_zip.value.toString())
+            intent.putExtra("units", units)
+            startActivityForResult(intent, SETTINGS_REQUEST)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Check which request we're responding to
+        if (requestCode == SETTINGS_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == Activity.RESULT_OK) {
+                m_zip.value = data?.getStringExtra("zip")
+                units = data?.getStringExtra("units")!!
+            }
+        }
     }
 }

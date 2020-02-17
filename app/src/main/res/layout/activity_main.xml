@@ -12,7 +12,7 @@
         android:id="@+id/card_current_weather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/colorWarm" >
+        app:cardBackgroundColor="@color/colorWarm">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -26,8 +26,8 @@
                 android:padding="10dp"
                 android:textColor="#FFFFFF"
                 android:textSize="12pt"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="City" />
 
             <ImageView
@@ -36,8 +36,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:padding="10dp"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_settings_white_24dp" />
 
             <TextView
