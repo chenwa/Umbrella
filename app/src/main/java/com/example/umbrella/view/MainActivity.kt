@@ -81,10 +81,32 @@ class MainActivity : AppCompatActivity() {
                         this@MainActivity,
                         4
                     )
-                    recycler_view.adapter = CustomAdapter(t!!)
+                    recycler_view.adapter = CustomAdapter(t.subList(0, 8)!!)
                 })
 
         weatherViewModel.getWeather(m_zip.value!!, units)
+
+        // Tomorrow's Weather card view
+        val tomorrowWeatherViewModel = ViewModelProvider(
+            this,
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                    return WeatherViewModel() as T
+                }
+            }
+        ).get(WeatherViewModel::class.java)
+
+        tomorrowWeatherViewModel.getWeatherList()
+            .observe(this,
+                Observer<List<DataWeather>> { t ->
+                    recycler_view_tomorrow.layoutManager = GridLayoutManager(
+                        this@MainActivity,
+                        4
+                    )
+                    recycler_view_tomorrow.adapter = CustomAdapter(t.subList(8, 16)!!)
+                })
+
+        tomorrowWeatherViewModel.getWeather(m_zip.value!!, units)
 
         // Alert Dialog for Zip code
 

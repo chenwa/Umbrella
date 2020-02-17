@@ -1,10 +1,12 @@
 package com.example.umbrella.view
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.umbrella.R
 import com.example.umbrella.model.DataWeather
@@ -23,6 +25,15 @@ class CustomAdapter(val dataSet : List<DataWeather>) :
     var lowestIndex : Int = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
+        // This only works for when we place 8 for Today and Tomorrow
+        for (i in 1..7) {
+            if (dataSet[i].main.temp.toFloat() > dataSet[highestIndex].main.temp.toFloat()) {
+                highestIndex = i
+            }
+            if (dataSet[i].main.temp.toFloat() < dataSet[lowestIndex].main.temp.toFloat()) {
+                lowestIndex = i
+            }
+        }
 
         var viewHolder = CustomViewHolder(
             LayoutInflater.from(parent.context)
@@ -39,15 +50,15 @@ class CustomAdapter(val dataSet : List<DataWeather>) :
 
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        holder.onBind(dataSet[position])
+        holder.onBind(dataSet[position], position, highestIndex, lowestIndex)
     }
 
     class CustomViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val tvTime : TextView = itemView.findViewById(R.id.tv_time)
-        val tvtemp : TextView = itemView.findViewById(R.id.tv_temp)
+        val tvTemp : TextView = itemView.findViewById(R.id.tv_temp)
         val ivWeather : ImageView = itemView.findViewById(R.id.iv_weather)
 
-        fun onBind(data : DataWeather){
+        fun onBind(data : DataWeather, position: Int, highestIndex: Int, lowestIndex: Int){
             // Build icon url
             val baseUrl = "http://openweathermap.org/img/wn/"
             val endUrl = "@2x.png"
@@ -62,8 +73,21 @@ class CustomAdapter(val dataSet : List<DataWeather>) :
             val time = outputFormat.format(inputFormat.parse(data.dt_txt)!!)
 
             tvTime.text = time
-            tvtemp.text = temperature
+            tvTemp.text = temperature
             Picasso.get().load(iconUrl).into(ivWeather)
+
+            // Set low and high temps
+            if (highestIndex == lowestIndex) {
+                // Don't tint
+            } else if (position == lowestIndex) {
+                tvTemp.setTextColor(Color.parseColor("#14A7F4")) // colorCold
+                tvTime.setTextColor(Color.parseColor("#14A7F4")) // colorCold
+                ivWeather.setColorFilter(Color.parseColor("#14A7F4"))
+            } else if (position == highestIndex) {
+                tvTemp.setTextColor(Color.parseColor("#FE9900")) // colorCold
+                tvTime.setTextColor(Color.parseColor("#FE9900")) // colorCold
+                ivWeather.setColorFilter(Color.parseColor("#FE9900"))
+            }
         }
     }
 }
